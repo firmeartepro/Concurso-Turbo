@@ -217,6 +217,7 @@
       // Alterna entre o modo de login e registo
       switchAuthModeBtn.addEventListener('click', () => {
         isSignUp = !isSignUp;
+        console.log(`Modo de autenticação alternado para ${isSignUp ? 'registo' : 'login'}.`); // LOG para depuração
         if (isSignUp) {
           authTitle.textContent = 'Registar';
           authForm.querySelector('button[type="submit"]').textContent = 'Registar';
@@ -237,15 +238,18 @@
         if (isSignUp) {
           const { data, error } = await supabase.auth.signUp({ email, password });
           if (error) {
+            console.error('Erro de registo Supabase:', error);
             showAuthMessage('error', `Erro no registo: ${error.message}`);
           } else {
-            showAuthMessage('success', 'Registo com sucesso! Verifique o seu email para confirmar a conta.');
+            console.log('Registo bem-sucedido, verifique o email:', data);
+            showAuthMessage('success', 'Registo com sucesso! Por favor, verifique a sua caixa de entrada para um email de confirmação e clique no link antes de tentar fazer login.');
             isSignUp = false;
             switchAuthModeBtn.click();
           }
         } else {
           const { data, error } = await supabase.auth.signInWithPassword({ email, password });
           if (error) {
+            console.error('Erro de login Supabase:', error);
             showAuthMessage('error', `Erro no login: ${error.message}`);
           }
         }
@@ -525,6 +529,7 @@
   </script>
 </body>
 </html>
+
 
 
 
