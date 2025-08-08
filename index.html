@@ -102,11 +102,11 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label for="nomeConcurso" class="block text-sm font-medium text-gray-700">Nome do Concurso</label>
-              <input type="text" id="nomeConcurso" name="nomeConcurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
+              <input type="text" id="nomeConcurso" name="nome_concurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
             </div>
             <div>
               <label for="nivelEscolaridade" class="block text-sm font-medium text-gray-700">Nível de Escolaridade</label>
-              <select id="nivelEscolaridade" name="nivelEscolaridade" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+              <select id="nivelEscolaridade" name="nivel_escolaridade" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
                 <option value="">Selecione...</option>
                 <option value="Fundamental">Fundamental</option>
                 <option value="Médio">Médio</option>
@@ -115,24 +115,24 @@
             </div>
             <div>
               <label for="areaAtuacao" class="block text-sm font-medium text-gray-700">Área de Atuação</label>
-              <input type="text" id="areaAtuacao" name="areaAtuacao" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
+              <input type="text" id="areaAtuacao" name="area_atuacao" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
             </div>
             <div>
               <label for="localConcurso" class="block text-sm font-medium text-gray-700">Local do Concurso (Cidade/Estado)</label>
-              <input type="text" id="localConcurso" name="localConcurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
+              <input type="text" id="localConcurso" name="local_concurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
             </div>
             <div>
               <label for="dataProva" class="block text-sm font-medium text-gray-700">Data da Prova</label>
-              <input type="date" id="dataProva" name="dataProva" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
+              <input type="date" id="dataProva" name="data_prova" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
             </div>
             <div>
               <label for="tempoDisponivel" class="block text-sm font-medium text-gray-700">Tempo de Estudo (min/dia)</label>
-              <input type="number" id="tempoDisponivel" name="tempoDisponivel" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
+              <input type="number" id="tempoDisponivel" name="tempo_disponivel_diario" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" />
             </div>
           </div>
           <div class="col-span-full">
             <label for="conteudoProgramatico" class="block text-sm font-medium text-gray-700">Conteúdo Programático</label>
-            <textarea id="conteudoProgramatico" name="conteudoProgramatico" rows="5" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" placeholder="Cole aqui o conteúdo programático do edital..."></textarea>
+            <textarea id="conteudoProgramatico" name="conteudo_programatico" rows="5" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" placeholder="Cole aqui o conteúdo programático do edital..."></textarea>
           </div>
           <div id="message-container"></div>
           <div class="flex space-x-4">
@@ -464,17 +464,21 @@
         
         const userId = supabaseClient.auth.currentUser.id;
 
+        // **Melhoria aqui**: Verifica se o campo numérico está vazio e atribui 0 se for o caso
+        const tempoDisponivel = formData.get('tempo_disponivel_diario');
+        const tempoDisponivelInt = tempoDisponivel ? parseInt(tempoDisponivel, 10) : 0;
+        
         const formData = new FormData(form);
         const dataToInsert = {
           user_id: userId,
-          nome_concurso: formData.get('nomeConcurso'),
-          nivel_escolaridade: formData.get('nivelEscolaridade'),
-          area_atuacao: formData.get('areaAtuacao'),
-          local_concurso: formData.get('localConcurso'),
-          data_prova: formData.get('dataProva'),
-          tempo_disponivel_diario: parseInt(formData.get('tempoDisponivel'), 10),
+          nome_concurso: formData.get('nome_concurso'),
+          nivel_escolaridade: formData.get('nivel_escolaridade'),
+          area_atuacao: formData.get('area_atuacao'),
+          local_concurso: formData.get('local_concurso'),
+          data_prova: formData.get('data_prova'),
+          tempo_disponivel_diario: tempoDisponivelInt,
           data_criacao: new Date().toISOString(),
-          conteudo_programatico: formData.get('conteudoProgramatico'),
+          conteudo_programatico: formData.get('conteudo_programatico'),
         };
 
         if (editingId) {
@@ -541,6 +545,7 @@
   </script>
 </body>
 </html>
+
 
 
 
