@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
@@ -6,8 +5,8 @@
   <title>Concurso Turbo IA</title>
   <!-- Carrega o Tailwind CSS para o design -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Carrega a biblioteca do Supabase via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.4/dist/umd/supabase.js"></script>
+  <!-- Carrega a biblioteca do Supabase via CDN, agora de forma correta -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -174,7 +173,8 @@
       const SUPABASE_URL = 'https://ardrrkahbwqademjmdlm.supabase.co'; // Ex: https://abcdefghijklmnop.supabase.co
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyZHJya2FoYndxYWRlbWptZGxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0NzQ3ODQsImV4cCI6MjA3MDA1MDc4NH0.K3IsVdlqwbVmbGXOq6J9PUfWo4FLCuTzjClqD3GtFvc'; // Ex: eyJhbGciOiJIUzI1NiIsIn...
       
-      const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { createClient } = supabase;
+      const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
       // Elementos do DOM
       const authContainer = document.getElementById('auth-container');
@@ -217,7 +217,6 @@
       // Alterna entre o modo de login e registo
       switchAuthModeBtn.addEventListener('click', () => {
         isSignUp = !isSignUp;
-        console.log(`Modo de autenticação alternado para ${isSignUp ? 'registo' : 'login'}.`); // LOG para depuração
         if (isSignUp) {
           authTitle.textContent = 'Registar';
           authForm.querySelector('button[type="submit"]').textContent = 'Registar';
@@ -236,7 +235,7 @@
         const password = passwordInput.value;
 
         if (isSignUp) {
-          const { data, error } = await supabase.auth.signUp({ email, password });
+          const { data, error } = await supabaseClient.auth.signUp({ email, password });
           if (error) {
             console.error('Erro de registo Supabase:', error);
             showAuthMessage('error', `Erro no registo: ${error.message}`);
@@ -247,7 +246,7 @@
             switchAuthModeBtn.click();
           }
         } else {
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
           if (error) {
             console.error('Erro de login Supabase:', error);
             showAuthMessage('error', `Erro no login: ${error.message}`);
@@ -257,14 +256,14 @@
 
       // Lidar com o logout
       logoutBtn.addEventListener('click', async () => {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabaseClient.auth.signOut();
         if (error) {
           console.error('Erro ao sair:', error.message);
         }
       });
       
       // Ouve mudanças na autenticação
-      supabase.auth.onAuthStateChange((event, session) => {
+      supabaseClient.auth.onAuthStateChange((event, session) => {
         if (session) {
           authContainer.classList.add('hidden');
           appContainer.classList.remove('hidden');
@@ -281,7 +280,7 @@
       });
 
       userIdTooltip.addEventListener('click', () => {
-          const userId = supabase.auth.currentUser?.id;
+          const userId = supabaseClient.auth.currentUser?.id;
           if (userId) {
               const el = document.createElement('textarea');
               el.value = userId;
@@ -299,7 +298,7 @@
       // Função para buscar e renderizar os concursos
       const fetchConcursos = async (userId) => {
         concursosList.innerHTML = '<p class="text-center text-gray-500">Carregando concursos...</p>';
-        const { data, error } = await supabase.from('concursos').select('*').eq('user_id', userId);
+        const { data, error } = await supabaseClient.from('concursos').select('*').eq('user_id', userId);
         if (error) {
           console.error('Erro ao carregar concursos:', error.message);
           concursosList.innerHTML = '<p class="text-center text-red-500">Erro ao carregar os dados.</p>';
@@ -352,7 +351,7 @@
 
       // Função para carregar os dados de um concurso para o formulário (modo de edição)
       const loadConcursoToForm = async (id) => {
-        const { data, error } = await supabase.from('concursos').select('*').eq('id', id).single();
+        const { data, error } = await supabaseClient.from('concursos').select('*').eq('id', id).single();
         if (error) {
           console.error('Erro ao carregar dados para edição:', error.message);
           showMessage('error', 'Erro ao carregar dados para edição.');
@@ -378,13 +377,13 @@
       const deleteConcurso = async (id) => {
         if (!confirm('Tem certeza que deseja apagar este concurso?')) return;
         
-        const { error } = await supabase.from('concursos').delete().eq('id', id);
+        const { error } = await supabaseClient.from('concursos').delete().eq('id', id);
         if (error) {
           console.error('Erro ao apagar concurso:', error.message);
           showMessage('error', 'Erro ao apagar concurso.');
         } else {
           showMessage('success', 'Concurso apagado com sucesso!');
-          fetchConcursos(supabase.auth.currentUser.id);
+          fetchConcursos(supabaseClient.auth.currentUser.id);
         }
       };
 
@@ -394,7 +393,7 @@
         studyPlanContent.innerHTML = '<p class="text-center text-gray-500">A gerar plano de estudos com IA... Por favor, aguarde.</p>';
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-        const { data, error } = await supabase.from('concursos').select('*').eq('id', concursoId).single();
+        const { data, error } = await supabaseClient.from('concursos').select('*').eq('id', concursoId).single();
         if (error) {
           console.error('Erro ao buscar dados para o plano:', error.message);
           studyPlanContent.innerHTML = '<p class="text-center text-red-500">Erro ao buscar dados do concurso. Não foi possível gerar o plano.</p>';
@@ -450,7 +449,7 @@
         e.preventDefault();
         submitButton.disabled = true;
         
-        const userId = supabase.auth.currentUser.id;
+        const userId = supabaseClient.auth.currentUser.id;
 
         const formData = new FormData(form);
         const dataToInsert = {
@@ -468,7 +467,7 @@
         if (editingId) {
           // Modo de Edição: Atualiza o registro
           submitButton.textContent = 'Atualizando...';
-          const { error } = await supabase.from('concursos').update(dataToInsert).eq('id', editingId);
+          const { error } = await supabaseClient.from('concursos').update(dataToInsert).eq('id', editingId);
           if (error) {
             console.error('Erro ao atualizar dados:', error.message);
             showMessage('error', `Erro ao atualizar: ${error.message}`);
@@ -481,7 +480,7 @@
         } else {
           // Modo de Cadastro: Insere um novo registro
           submitButton.textContent = 'Salvando...';
-          const { error } = await supabase.from('concursos').insert([dataToInsert]);
+          const { error } = await supabaseClient.from('concursos').insert([dataToInsert]);
           if (error) {
             console.error('Erro ao inserir dados:', error.message);
             showMessage('error', `Erro ao cadastrar: ${error.message}`);
@@ -529,6 +528,7 @@
   </script>
 </body>
 </html>
+
 
 
 
