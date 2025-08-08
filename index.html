@@ -12,6 +12,40 @@
     body {
       font-family: 'Inter', sans-serif;
     }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%; /* Position the tooltip above the text */
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans p-6 md:p-12">
@@ -22,76 +56,114 @@
       <p class="text-xl text-gray-600">Prepare-se para o sucesso com a inteligência artificial</p>
     </header>
 
-    <!-- Formulário de Cadastro e Edição -->
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full">
-      <h2 id="form-title" class="text-3xl font-bold text-gray-900 mb-6 text-center">
-        Cadastro de Concurso
-      </h2>
-      <form id="form-concurso" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label for="nomeConcurso" class="block text-sm font-medium text-gray-700">Nome do Concurso</label>
-            <input type="text" id="nomeConcurso" name="nomeConcurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
-          </div>
-          <div>
-            <label for="nivelEscolaridade" class="block text-sm font-medium text-gray-700">Nível de Escolaridade</label>
-            <select id="nivelEscolaridade" name="nivelEscolaridade" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition">
-              <option value="">Selecione...</option>
-              <option value="Fundamental">Fundamental</option>
-              <option value="Médio">Médio</option>
-              <option value="Superior">Superior</option>
-            </select>
-          </div>
-          <div>
-            <label for="areaAtuacao" class="block text-sm font-medium text-gray-700">Área de Atuação</label>
-            <input type="text" id="areaAtuacao" name="areaAtuacao" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
-          </div>
-          <div>
-            <label for="localConcurso" class="block text-sm font-medium text-gray-700">Local do Concurso (Cidade/Estado)</label>
-            <input type="text" id="localConcurso" name="localConcurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
-          </div>
-          <div>
-            <label for="dataProva" class="block text-sm font-medium text-gray-700">Data da Prova</label>
-            <input type="date" id="dataProva" name="dataProva" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
-          </div>
-          <div>
-            <label for="tempoDisponivel" class="block text-sm font-medium text-gray-700">Tempo de Estudo (min/dia)</label>
-            <input type="number" id="tempoDisponivel" name="tempoDisponivel" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
-          </div>
+    <!-- Formulário de Autenticação -->
+    <div id="auth-container" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
+      <h2 id="auth-title" class="text-3xl font-bold text-gray-900 mb-6 text-center">Login</h2>
+      <form id="auth-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
         </div>
-        <div class="col-span-full">
-          <label for="conteudoProgramatico" class="block text-sm font-medium text-gray-700">Conteúdo Programático</label>
-          <textarea id="conteudoProgramatico" name="conteudoProgramatico" rows="5" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Cole aqui o conteúdo programático do edital..."></textarea>
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input type="password" id="password" name="password" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
         </div>
-        <div id="message-container"></div>
-        <div class="flex space-x-4">
-          <button type="submit" id="submit-button" class="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:opacity-50">
-            Salvar Concurso
-          </button>
-          <button type="button" id="cancel-button" class="hidden flex-1 flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-bold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition disabled:opacity-50">
-            Cancelar
-          </button>
-        </div>
+        <div id="auth-message-container"></div>
+        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+          Entrar
+        </button>
+        <button type="button" id="switch-auth-mode" class="w-full text-center text-sm text-blue-600 hover:text-blue-800 transition">
+          Não tem uma conta? Registar aqui.
+        </button>
       </form>
     </div>
 
-    <!-- Painel de Concursos Cadastrados -->
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full">
-      <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
-        Concursos Cadastrados
-      </h2>
-      <div id="concursos-list">
-        <p class="text-center text-gray-500">Carregando concursos...</p>
+    <!-- Interface Principal da Aplicação (escondida por padrão) -->
+    <div id="app-container" class="hidden space-y-12">
+      <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-xl">
+        <div class="flex items-center space-x-4">
+          <p class="text-gray-700 font-medium">Bem-vindo, <span id="user-email" class="font-bold text-blue-600"></span>!</p>
+          <div class="tooltip">
+            <span id="user-id-display" class="text-xs text-gray-500">ID: ...</span>
+            <span class="tooltiptext" id="user-id-tooltip">Copiar ID</span>
+          </div>
+        </div>
+        <button id="logout-btn" class="py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition">
+          Sair
+        </button>
       </div>
-    </div>
-    
-    <!-- Módulo de Plano de Estudos -->
-    <div id="study-plan-container" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full hidden">
-      <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
-        Plano de Estudos Personalizado
-      </h2>
-      <div id="study-plan-content">
-        <p class="text-center text-gray-500">O seu plano de estudos será exibido aqui.</p>
+
+      <!-- Formulário de Cadastro e Edição -->
+      <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full">
+        <h2 id="form-title" class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          Cadastro de Concurso
+        </h2>
+        <form id="form-concurso" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="nomeConcurso" class="block text-sm font-medium text-gray-700">Nome do Concurso</label>
+              <input type="text" id="nomeConcurso" name="nomeConcurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
+            </div>
+            <div>
+              <label for="nivelEscolaridade" class="block text-sm font-medium text-gray-700">Nível de Escolaridade</label>
+              <select id="nivelEscolaridade" name="nivelEscolaridade" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition">
+                <option value="">Selecione...</option>
+                <option value="Fundamental">Fundamental</option>
+                <option value="Médio">Médio</option>
+                <option value="Superior">Superior</option>
+              </select>
+            </div>
+            <div>
+              <label for="areaAtuacao" class="block text-sm font-medium text-gray-700">Área de Atuação</label>
+              <input type="text" id="areaAtuacao" name="areaAtuacao" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
+            </div>
+            <div>
+              <label for="localConcurso" class="block text-sm font-medium text-gray-700">Local do Concurso (Cidade/Estado)</label>
+              <input type="text" id="localConcurso" name="localConcurso" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
+            </div>
+            <div>
+              <label for="dataProva" class="block text-sm font-medium text-gray-700">Data da Prova</label>
+              <input type="date" id="dataProva" name="dataProva" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
+            </div>
+            <div>
+              <label for="tempoDisponivel" class="block text-sm font-medium text-gray-700">Tempo de Estudo (min/dia)</label>
+              <input type="number" id="tempoDisponivel" name="tempoDisponivel" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" />
+            </div>
+          </div>
+          <div class="col-span-full">
+            <label for="conteudoProgramatico" class="block text-sm font-medium text-gray-700">Conteúdo Programático</label>
+            <textarea id="conteudoProgramatico" name="conteudoProgramatico" rows="5" required class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-inner p-3 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Cole aqui o conteúdo programático do edital..."></textarea>
+          </div>
+          <div id="message-container"></div>
+          <div class="flex space-x-4">
+            <button type="submit" id="submit-button" class="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:opacity-50">
+              Salvar Concurso
+            </button>
+            <button type="button" id="cancel-button" class="hidden flex-1 flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-bold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition disabled:opacity-50">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Painel de Concursos Cadastrados -->
+      <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          Concursos Cadastrados
+        </h2>
+        <div id="concursos-list">
+          <p class="text-center text-gray-500">Carregando concursos...</p>
+        </div>
+      </div>
+      
+      <!-- Módulo de Plano de Estudos -->
+      <div id="study-plan-container" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full hidden">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          Plano de Estudos Personalizado
+        </h2>
+        <div id="study-plan-content">
+          <p class="text-center text-gray-500">O seu plano de estudos será exibido aqui.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -105,6 +177,19 @@
       const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_KEY);
 
       // Elementos do DOM
+      const authContainer = document.getElementById('auth-container');
+      const appContainer = document.getElementById('app-container');
+      const authForm = document.getElementById('auth-form');
+      const authTitle = document.getElementById('auth-title');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const authMessageContainer = document.getElementById('auth-message-container');
+      const switchAuthModeBtn = document.getElementById('switch-auth-mode');
+      const logoutBtn = document.getElementById('logout-btn');
+      const userEmailSpan = document.getElementById('user-email');
+      const userIdDisplay = document.getElementById('user-id-display');
+      const userIdTooltip = document.getElementById('user-id-tooltip');
+
       const form = document.getElementById('form-concurso');
       const formTitle = document.getElementById('form-title');
       const concursosList = document.getElementById('concursos-list');
@@ -115,11 +200,102 @@
       const studyPlanContent = document.getElementById('study-plan-content');
 
       let editingId = null; // Variável para controlar o modo de edição
+      let isSignUp = false; // Variável para alternar entre login e registo
+
+      // Exibe mensagens de autenticação
+      const showAuthMessage = (type, text) => {
+        authMessageContainer.innerHTML = `
+          <div class="rounded-md p-4 ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+            <p class="text-sm font-medium">${text}</p>
+          </div>
+        `;
+        setTimeout(() => {
+          authMessageContainer.innerHTML = '';
+        }, 5000);
+      };
+
+      // Alterna entre o modo de login e registo
+      switchAuthModeBtn.addEventListener('click', () => {
+        isSignUp = !isSignUp;
+        if (isSignUp) {
+          authTitle.textContent = 'Registar';
+          authForm.querySelector('button[type="submit"]').textContent = 'Registar';
+          switchAuthModeBtn.textContent = 'Já tem uma conta? Entrar aqui.';
+        } else {
+          authTitle.textContent = 'Login';
+          authForm.querySelector('button[type="submit"]').textContent = 'Entrar';
+          switchAuthModeBtn.textContent = 'Não tem uma conta? Registar aqui.';
+        }
+      });
+      
+      // Lidar com o envio do formulário de autenticação
+      authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        if (isSignUp) {
+          const { data, error } = await supabase.auth.signUp({ email, password });
+          if (error) {
+            showAuthMessage('error', `Erro no registo: ${error.message}`);
+          } else {
+            showAuthMessage('success', 'Registo com sucesso! Verifique o seu email para confirmar a conta.');
+            isSignUp = false;
+            switchAuthModeBtn.click();
+          }
+        } else {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) {
+            showAuthMessage('error', `Erro no login: ${error.message}`);
+          }
+        }
+      });
+
+      // Lidar com o logout
+      logoutBtn.addEventListener('click', async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error('Erro ao sair:', error.message);
+        }
+      });
+      
+      // Ouve mudanças na autenticação
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+          authContainer.classList.add('hidden');
+          appContainer.classList.remove('hidden');
+          userEmailSpan.textContent = session.user.email;
+          userIdDisplay.textContent = `ID: ${session.user.id.substring(0, 8)}...`;
+          userIdTooltip.textContent = `Copiar ID: ${session.user.id}`;
+          
+          fetchConcursos(session.user.id);
+        } else {
+          authContainer.classList.remove('hidden');
+          appContainer.classList.add('hidden');
+          concursosList.innerHTML = '';
+        }
+      });
+
+      userIdTooltip.addEventListener('click', () => {
+          const userId = supabase.auth.currentUser?.id;
+          if (userId) {
+              const el = document.createElement('textarea');
+              el.value = userId;
+              document.body.appendChild(el);
+              el.select();
+              document.execCommand('copy');
+              document.body.removeChild(el);
+              userIdTooltip.textContent = 'Copiado!';
+              setTimeout(() => {
+                userIdTooltip.textContent = `Copiar ID: ${userId}`;
+              }, 2000);
+          }
+      });
 
       // Função para buscar e renderizar os concursos
-      const fetchConcursos = async () => {
+      const fetchConcursos = async (userId) => {
         concursosList.innerHTML = '<p class="text-center text-gray-500">Carregando concursos...</p>';
-        const { data, error } = await supabase.from('concursos').select('*');
+        const { data, error } = await supabase.from('concursos').select('*').eq('user_id', userId);
         if (error) {
           console.error('Erro ao carregar concursos:', error.message);
           concursosList.innerHTML = '<p class="text-center text-red-500">Erro ao carregar os dados.</p>';
@@ -186,7 +362,7 @@
         document.getElementById('localConcurso').value = data.local_concurso;
         document.getElementById('dataProva').value = data.data_prova;
         document.getElementById('tempoDisponivel').value = data.tempo_disponivel_diario;
-        // O campo de conteúdo programático não está no banco ainda, então não o preenchemos.
+        document.getElementById('conteudoProgramatico').value = data.conteudo_programatico || '';
         
         editingId = id;
         formTitle.textContent = 'Editar Concurso';
@@ -204,7 +380,7 @@
           showMessage('error', 'Erro ao apagar concurso.');
         } else {
           showMessage('success', 'Concurso apagado com sucesso!');
-          fetchConcursos();
+          fetchConcursos(supabase.auth.currentUser.id);
         }
       };
 
@@ -222,7 +398,7 @@
         }
 
         const prompt = `
-          Com base nas informações do concurso abaixo, crie um plano de estudos detalhado e semanal para as próximas semanas. O plano deve ser adaptado à data da prova e ao tempo de estudo diário disponível. A prova será em ${data.data_prova}, e o estudante tem ${data.tempo_disponivel_diario} minutos por dia. O conteúdo programático é: "Conhecimentos básicos de português, matemática, informática e conhecimentos específicos.". O plano deve estar em formato Markdown e ser facilmente legível.
+          Com base nas informações do concurso abaixo, crie um plano de estudos detalhado e semanal para as próximas semanas. O plano deve ser adaptado à data da prova e ao tempo de estudo diário disponível. A prova será em ${data.data_prova}, e o estudante tem ${data.tempo_disponivel_diario} minutos por dia. O conteúdo programático é: "${data.conteudo_programatico}". O plano deve estar em formato Markdown e ser facilmente legível.
           
           Concurso: ${data.nome_concurso}
           Local: ${data.local_concurso}
@@ -270,7 +446,7 @@
         e.preventDefault();
         submitButton.disabled = true;
         
-        const userId = 'a1b2c3d4-e5f6-7890-1234-567890abcdef'; // ID do usuário
+        const userId = supabase.auth.currentUser.id;
 
         const formData = new FormData(form);
         const dataToInsert = {
@@ -282,7 +458,7 @@
           data_prova: formData.get('dataProva'),
           tempo_disponivel_diario: parseInt(formData.get('tempoDisponivel'), 10),
           data_criacao: new Date().toISOString(),
-          conteudo_programatico: formData.get('conteudoProgramatico'), // Novo campo
+          conteudo_programatico: formData.get('conteudoProgramatico'),
         };
 
         if (editingId) {
@@ -296,7 +472,7 @@
             showMessage('success', 'Concurso atualizado com sucesso!');
             // Reseta o formulário e o estado de edição
             resetForm();
-            fetchConcursos();
+            fetchConcursos(userId);
           }
         } else {
           // Modo de Cadastro: Insere um novo registro
@@ -308,7 +484,7 @@
           } else {
             showMessage('success', 'Concurso cadastrado com sucesso!');
             form.reset();
-            fetchConcursos();
+            fetchConcursos(userId);
           }
         }
         submitButton.disabled = false;
@@ -345,8 +521,6 @@
         cancelButton.classList.add('hidden');
       };
 
-      // Carrega a lista de concursos ao iniciar a página
-      fetchConcursos();
     });
   </script>
 </body>
